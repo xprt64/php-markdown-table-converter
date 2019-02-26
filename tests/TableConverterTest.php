@@ -11,7 +11,7 @@ use League\HTMLToMarkdown\HtmlConverter;
 use PHPUnit\Framework\TestCase;
 use xprt64\HtmlTableToMarkdownConverter\TableConverter;
 
-require_once __DIR__ . '/../TableConverter.php';
+require_once __DIR__ . '/../src/TableConverter.php';
 
 class TableConverterTest extends TestCase
 {

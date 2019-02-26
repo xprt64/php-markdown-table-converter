@@ -13,5 +13,10 @@
             "name": "Constantin Galbenu",
             "email": "gica.galbenu@gmail.com"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {
+            "xprt64\\HtmlTableToMarkdownConverter\\": "src/"
+        }
+    }
 }
