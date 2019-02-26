@@ -1,0 +1,17 @@
+{
+    "name": "xprt64/php-markdown-table-converter",
+    "description": "A TableConverter for thephpleague/html-to-markdown",
+    "type": "library",
+    "require": {
+        "league/html-to-markdown": "^4.8"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.0"
+    },
+    "authors": [
+        {
+            "name": "Constantin Galbenu",
+            "email": "gica.galbenu@gmail.com"
+        }
+    ]
+}
