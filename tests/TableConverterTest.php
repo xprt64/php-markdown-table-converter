@@ -84,7 +84,7 @@ TAG
                 , <<<'TAG'
 | col1 | col2 |
 |------|------|
-| aaa\\ 111 | bbb |
+| aaa\n 111 | bbb |
 TAG
                 ,
             ],
