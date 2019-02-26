@@ -38,7 +38,7 @@ class TableConverter implements ConverterInterface
 
             case 'td':
             case 'th':
-                return str_replace("\n", '\n', trim($element->getValue()));
+                return preg_replace("#\n+#", '\n', trim($element->getValue()));
 
             case 'tbody':
                 return trim($element->getValue());
