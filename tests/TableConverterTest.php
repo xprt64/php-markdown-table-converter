@@ -9,6 +9,7 @@ declare(strict_types=1);
 use League\HTMLToMarkdown\Environment;
 use League\HTMLToMarkdown\HtmlConverter;
 use PHPUnit\Framework\TestCase;
+use xprt64\HtmlTableToMarkdownConverter\TableConverter;
 
 require_once __DIR__ . '/../TableConverter.php';
 

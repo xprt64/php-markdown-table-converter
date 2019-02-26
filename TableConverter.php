@@ -3,6 +3,8 @@
  * @see https://github.com/Mark-H/Docs/blob/2.x/convert/util/TableConverter.php
  */
 
+namespace xprt64\HtmlTableToMarkdownConverter;
+
 use League\HTMLToMarkdown\Converter\ConverterInterface;
 use League\HTMLToMarkdown\ElementInterface;
 
