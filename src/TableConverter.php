@@ -1,5 +1,10 @@
 <?php
 /**
+ * @license http://www.opensource.org/licenses/mit-license.html  MIT License
+ * @author Constantin Galbenu <xprt64@gmail.com>
+ */
+
+/**
  * @see https://github.com/Mark-H/Docs/blob/2.x/convert/util/TableConverter.php
  */
 
@@ -33,7 +38,7 @@ class TableConverter implements ConverterInterface
 
             case 'td':
             case 'th':
-                return trim($element->getValue());
+                return str_replace("\n", '\\\\', trim($element->getValue()));
 
             case 'tbody':
                 return trim($element->getValue());

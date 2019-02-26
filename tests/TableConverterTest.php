@@ -62,6 +62,32 @@ TAG
 TAG
                 ,
             ],
+         [
+             // newline inside cell
+                <<<'TAG'
+<table>
+    <thead>
+        <tr>
+            <td>col1</td>
+            <td>col2</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>aaa
+ 111</td>
+            <td>bbb</td>
+        </tr>
+    </tbody>
+</table>
+TAG
+                , <<<'TAG'
+| col1 | col2 |
+|------|------|
+| aaa\\ 111 | bbb |
+TAG
+                ,
+            ],
         [ /** two rows */
                 <<<'TAG'
 <table>
