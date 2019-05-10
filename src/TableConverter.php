@@ -2,6 +2,7 @@
 /**
  * @license http://www.opensource.org/licenses/mit-license.html  MIT License
  * @author Constantin Galbenu <xprt64@gmail.com>
+ * @author Chris Kruining <chris@gmailkruining.eu>
  */
 
 /**
@@ -24,17 +25,10 @@ class TableConverter implements ConverterInterface
     {
         switch ($element->getTagName()) {
             case 'tr':
-                $line = [];
-                $i = 1;
-                foreach ($element->getChildren() as $td) {
-                    $i++;
-                    $v = $td->getValue();
-                    $v = trim($v);
-                    if ($i % 2 === 0 || $v !== '') {
-                        $line[] = $v;
-                    }
-                }
-                return '| ' . implode(' | ', $line) . " |\n";
+                return sprintf(
+                    "| %s |\n",
+                    implode(' | ', array_map(function($td){ return trim($td->getValue()); }, $element->getChildren()))
+                );
 
             case 'td':
             case 'th':
@@ -44,7 +38,8 @@ class TableConverter implements ConverterInterface
                 return trim($element->getValue());
 
             case 'thead':
-                $headerLine = reset($element->getChildren())->getValue();
+                $children = $element->getChildren();
+                $headerLine = reset($children)->getValue();
                 $headers = explode(' | ', trim(trim($headerLine, "\n"), '|'));
 
                 $hr = [];
@@ -57,20 +52,46 @@ class TableConverter implements ConverterInterface
                 return $headerLine . $hr . "\n";
             case 'table':
                 $inner = $element->getValue();
-                if (strpos($inner, '-----') === false) {
-                    $inner = explode("\n", $inner);
-                    $single = explode(' | ', trim($inner[0], '|'));
-                    $hr = [];
-                    foreach ($single as $td) {
-                        $length = strlen(trim($td)) + 2;
-                        $hr[] = str_repeat('-', $length > 3 ? $length : 3);
+                $data = array_map(
+                    function($r){
+                        return array_slice(array_map(
+                            function($r){ return preg_match('/\-+/', $r) ? '-' : trim($r); },
+                            explode('|', $r)
+                        ), 1, -1);
+                    },
+                    explode("\n", $inner)
+                );
+                $size = count($data[0]);
+
+                for($i = 0; $i < $size; $i++)
+                {
+                    $width = max(array_map(function($r) use($i){ return mb_strlen($r[$i] ?? ''); }, $data));
+
+                    foreach($data as &$row)
+                    {
+                        if($width < 2)
+                        {
+                            unset($row[$i]);
+                        }
+                        else
+                        {
+                            $cell = $row[$i] ?? '';
+
+                            $format = $cell === '-'
+                                ? '%\'-' . $width . 's'
+                                : '%-' . $width . 's';
+
+                            $row[$i] = mb_sprintf($format, $cell);
+                        }
                     }
-                    $hr = '|' . implode('|', $hr) . '|';
-                    array_splice($inner, 1, 0, $hr);
-                    $inner = implode("\n", $inner);
+
+                    unset($row);
                 }
+
+                $inner = join("\n", array_map(function($r){ return sprintf('| %s |', join(' | ', $r)); }, $data));
                 return trim($inner) . "\n\n";
         }
+
         return $element->getValue();
     }
 
@@ -79,6 +100,6 @@ class TableConverter implements ConverterInterface
      */
     public function getSupportedTags()
     {
-        return array('table', 'tr', 'thead', 'td', 'tbody');
+        return array('table', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th');
     }
 }
