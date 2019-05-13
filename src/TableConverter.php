@@ -55,7 +55,7 @@ class TableConverter implements ConverterInterface
                 $data = array_map(
                     function($r){
                         return array_slice(array_map(
-                            function($r){ return preg_match('/\-+/', $r) ? '-' : trim($r); },
+                            function($r){ return preg_match('/^\-+$/', $r) ? '-' : trim($r); },
                             explode('|', $r)
                         ), 1, -1);
                     },
