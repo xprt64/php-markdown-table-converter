@@ -17,13 +17,11 @@ class TableConverterTest extends TestCase
 {
     protected function setUp(): void
     {
-        error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+        error_reporting(E_ALL & ~E_NOTICE);
         parent::setUp();
     }
 
-    /**
-     * @dataProvider tablesProvider
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('tablesProvider')]
     public function testTable($input, $expected)
     {
         $environment = new Environment();
@@ -35,7 +33,7 @@ class TableConverterTest extends TestCase
         $this->assertSame($expected, $actual);
     }
 
-    public function tablesProvider()
+    public static function tablesProvider()
     {
         return [
             [

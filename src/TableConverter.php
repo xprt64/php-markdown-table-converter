@@ -20,19 +20,17 @@ class TableConverter implements ConverterInterface
      *
      * @return string
      */
-    public function convert(ElementInterface $element)
+    public function convert(ElementInterface $element): string
     {
         switch ($element->getTagName()) {
             case 'tr':
                 $line = [];
-                $i = 1;
                 foreach ($element->getChildren() as $td) {
-                    $i++;
-                    $v = $td->getValue();
-                    $v = trim($v);
-                    if ($i % 2 === 0 || $v !== '') {
-                        $line[] = $v;
+                    $raw = $td->getValue();
+                    if ($raw !== '' && trim($raw) === '') {
+                        continue; // whitespace between cells
                     }
+                    $line[] = trim($raw);
                 }
                 return '| ' . implode(' | ', $line) . " |\n";
 
@@ -41,10 +39,16 @@ class TableConverter implements ConverterInterface
                 return preg_replace("#\n+#", '\n', trim($element->getValue()));
 
             case 'tbody':
-                return trim($element->getValue());
+                return $this->normalizeRows($element->getValue());
 
             case 'thead':
-                $headerLine = reset($element->getChildren())->getValue();
+                $headerLine = '';
+                foreach ($element->getChildren() as $child) {
+                    if (trim($child->getValue()) !== '') {
+                        $headerLine = trim($child->getValue()) . "\n";
+                        break;
+                    }
+                }
                 $headers = explode(' | ', trim(trim($headerLine, "\n"), '|'));
 
                 $hr = [];
@@ -56,7 +60,7 @@ class TableConverter implements ConverterInterface
 
                 return $headerLine . $hr . "\n";
             case 'table':
-                $inner = $element->getValue();
+                $inner = $this->normalizeRows($element->getValue());
                 if (strpos($inner, '-----') === false) {
                     $inner = explode("\n", $inner);
                     $single = explode(' | ', trim($inner[0], '|'));
@@ -77,8 +81,15 @@ class TableConverter implements ConverterInterface
     /**
      * @return string[]
      */
-    public function getSupportedTags()
+    public function getSupportedTags(): array
     {
         return array('table', 'tr', 'thead', 'td', 'tbody');
+    }
+
+    private function normalizeRows(string $value): string
+    {
+        $lines = array_filter(array_map('trim', explode("\n", $value)), static fn(string $l) => $l !== '');
+
+        return implode("\n", $lines);
     }
 }
